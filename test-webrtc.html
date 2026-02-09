@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebRTC Connection Test</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>WebRTC Connection Test</h1>
+    
+    <div id="status">Testing...</div>
+    
+    <button onclick="testConnection()">Test Connection</button>
+    <button onclick="checkPorts()">Check Ports</button>
+    
+    <div id="result"></div>
+    
+    <script>
+    async function testConnection() {
+        const status = document.getElementById('status');
+        const result = document.getElementById('result');
+        
+        status.textContent = 'Testing WebSocket connection...';
+        
+        // Пробуем разные порты и протоколы
+        const hosts = [
+            'wss://godeondayz.ru:3001',
+            'ws://godeondayz.ru:3001',
+            'wss://godeondayz.ru:443',
+            'ws://godeondayz.ru:80'
+        ];
+        
+        for (let host of hosts) {
+            try {
+                status.textContent = `Trying ${host}...`;
+                
+                const socket = io(host, {
+                    transports: ['websocket'],
+                    timeout: 5000
+                });
+                
+                await new Promise((resolve, reject) => {
+                    socket.on('connect', () => {
+                        result.innerHTML += `<p style="color: green;">✅ Connected to ${host}</p>`;
+                        socket.disconnect();
+                        resolve();
+                    });
+                    
+                    socket.on('connect_error', (error) => {
+                        result.innerHTML += `<p style="color: red;">❌ Failed to connect to ${host}: ${error.message}</p>`;
+                        reject(error);
+                    });
+                    
+                    setTimeout(() => {
+                        result.innerHTML += `<p style="color: orange;">⏰ Timeout for ${host}</p>`;
+                        socket.disconnect();
+                        reject(new Error('Timeout'));
+                    }, 5000);
+                });
+                
+            } catch (error) {
+                console.log(`Failed for ${host}:`, error.message);
+            }
+        }
+        
+        status.textContent = 'Test complete';
+    }
+    
+    function checkPorts() {
+        const ports = [3001, 3000, 8080, 80, 443];
+        const result = document.getElementById('result');
+        
+        result.innerHTML = '<h3>Port Scan Results:</h3>';
+        
+        ports.forEach(port => {
+            const img = new Image();
+            img.onload = function() {
+                result.innerHTML += `<p style="color: green;">✅ Port ${port} is OPEN</p>`;
+            };
+            img.onerror = function() {
+                result.innerHTML += `<p style="color: red;">❌ Port ${port} is CLOSED or blocked</p>`;
+            };
+            img.src = `http://godeondayz.ru:${port}/favicon.ico?t=${Date.now()}`;
+        });
+    }
+    
+    // Автоматический тест при загрузке
+    setTimeout(testConnection, 1000);
+    </script>
+</body>
+</html>

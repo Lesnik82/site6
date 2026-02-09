@@ -1,0 +1,263 @@
+DirectoryIndex index.php
+
+# Allow API access
+<Files "api.php">
+    Require all granted
+</Files>
+
+# RewriteEngine
+<IfModule mod_rewrite.c> 
+RewriteEngine On
+
+# Пользователь
+RewriteRule ^id([0-9]*)/?$ modules/user/profile.php?id=$1 [L,QSA]
+RewriteRule ^account/edit/?$ modules/user/edit/index.php [L,QSA]
+RewriteRule ^account/edit/personal/?$ modules/user/edit/index.php?act=personal [L,QSA]
+RewriteRule ^account/settings/?$ modules/user/settings/index.php [L,QSA]
+RewriteRule ^account/settings/them/?$ modules/user/settings/index.php?act=them [L,QSA]
+RewriteRule ^account/settings/language/?$ modules/user/settings/index.php?act=language [L,QSA]
+RewriteRule ^account/settings/privacy/?$ modules/user/settings/index.php?act=privacy [L,QSA]
+RewriteRule ^account/settings/security/?$ modules/user/settings/index.php?act=security [L,QSA]
+RewriteRule ^account/settings/balance/?$ modules/user/settings/index.php?act=balance [L,QSA]
+RewriteRule ^premium?$ modules/user/premium/index.php [L,QSA]
+
+# Голосовые комнаты
+RewriteRule ^voice/?$ modules/voice/index.php [L,QSA]
+RewriteRule ^voice/new/?$ modules/voice/new.php [L,QSA]
+RewriteRule ^voice/edit/([0-9]*)/?$ modules/voice/edit.php?id=$1 [L,QSA]
+RewriteRule ^voice/room/([0-9]*)/?$ modules/voice/room.php?id=$1 [L,QSA]
+RewriteRule ^voice/test/?$ modules/voice/test.php [L,QSA]
+RewriteRule ^voice/websocket/?$ modules/voice/start-websocket.php [L,QSA]
+
+# Добавляем новое правило для API информации о комнате
+RewriteRule ^voice/api/room_info/([0-9]*)/?$ modules/voice/api.php?action=room_info&room_id=$1 [L,QSA]
+RewriteRule ^voice/api/([a-zA-Z0-9_-]+)/?$ modules/voice/api.php?action=$1 [L,QSA]
+
+# ВАЖНОЕ ИСПРАВЛЕНИЕ: Изменяем маршрут API
+RewriteRule ^voice/ws-test/?$ modules/voice/ws-test.php [L,QSA]
+RewriteRule ^voice/api/([a-z_]+)/?$ modules/voice/api.php?action=$1 [L,QSA]
+RewriteRule ^voice/api/?$ modules/voice/api.php [L,QSA]
+RewriteRule ^voice/api/([a-zA-Z0-9_-]+)/?$ modules/voice/api.php?action=$1 [L,QSA]
+
+# Директ
+RewriteRule ^direct?$ modules/direct/index.php [L,QSA]
+RewriteRule ^direct/([0-9]*)/?$ modules/direct/dialog.php?id=$1 [L,QSA]
+RewriteRule ^direct/upload/([0-9]*)/?$ modules/direct/upload.php?id=$1 [L,QSA]
+RewriteRule ^direct/([0-9]*)/del/?$ direct/$1/?del=$1 [L,QSA]
+RewriteRule ^direct/([0-9]*)/attach/?$ modules/direct/attach.php?id=$1 [L,QSA]
+RewriteRule ^direct/search/?$ modules/direct/index.php?act=search [L,QSA]
+RewriteRule ^direct/voice/([0-9]+)/?$ modules/direct/voice.php?id=$1 [L,QSA]
+
+# Подписки
+RewriteRule ^following([0-9]*)?$ /modules/follow/following.php?id=$1 [L,QSA]
+RewriteRule ^followers([0-9]*)?$ /modules/follow/followers.php?id=$1 [L,QSA]
+RewriteRule ^request?$ modules/notify/request.php [L,QSA]
+RewriteRule ^request/accept/([0-9]*)/?$ /request?accept=$1 [L,QSA]
+RewriteRule ^request/reject/([0-9]*)/?$ /request?reject=$1 [L,QSA]
+RewriteRule ^follow/sub([0-9]*)?$ modules/follow/sub.php?id=$1 [L,QSA]
+RewriteRule ^follow/unsub([0-9]*)?$ modules/follow/unsub.php?id=$1 [L,QSA]
+RewriteRule ^following/del/([0-9]*)/?$ modules/follow/following.php?id=$1&del_g=$1 [L,QSA]
+RewriteRule ^followers/del/([0-9]*)/?$ modules/follow/followers.php?id=$1&del_s=$1 [L,QSA]
+
+# Публикации
+RewriteRule ^public/new/?$ modules/public/new.php [L,QSA]
+RewriteRule ^public/new/clear/?$ modules/public/new.php?clear [L,QSA]
+RewriteRule ^p/([0-9]*)/?$ modules/public/view.php?id=$1 [L,QSA]
+RewriteRule ^p/like([0-9]*)/?$ modules/public/like.php?id=$1 [L,QSA]
+RewriteRule ^p/like/([0-9]*)/?$ modules/public/view_like.php?id=$1 [L,QSA]
+RewriteRule ^p/favorites([0-9]*)/?$ modules/public/favorites.php?id=$1 [L,QSA]
+RewriteRule ^p/edit/([0-9]*)/?$ modules/public/edit.php?id=$1 [L,QSA]
+RewriteRule ^p/del([0-9]*)/?$ p/$1?del_post=$1 [L,QSA]
+RewriteRule ^p/([0-9]*)/share/?$ modules/public/share.php?id=$1 [L,QSA]
+RewriteRule ^p/([0-9])/share/([0-9])/?$ modules/public/share.php?id=$1&share=$2 [L,QSA]
+
+# Сторисы
+RewriteRule ^story/new/?$ modules/story/new.php [L,QSA]
+RewriteRule ^story/new/clear/?$ modules/story/new.php?clear [L,QSA]
+
+# Поиск
+RewriteRule ^search/?$ modules/search/index.php [L,QSA]
+RewriteRule ^search/([0-9]*)/?$ modules/follow/followers.php?id=$1&act=search [L,QSA]
+
+# Разное
+RewriteRule ^notify?$ modules/notify/index.php [L,QSA]
+RewriteRule ^auth/?$ modules/user/auth/index.php [L,QSA]
+RewriteRule ^signup/?$ modules/user/reg/index.php [L,QSA]
+RewriteRule ^signup/act?$ modules/user/reg/inc/index.php [L,QSA]
+RewriteRule ^restore/?$ modules/user/restore/index.php [L,QSA]
+RewriteRule ^restore/act?$ modules/user/restore/inc/index.php [L,QSA]
+RewriteRule ^out?$ modules/user/exit.php [L,QSA]
+RewriteRule ^help/?$ modules/pages/index.php [L,QSA]
+RewriteRule ^about/?$ modules/pages/about.php [L,QSA]
+RewriteRule ^sogl/?$ modules/pages/sogl.php [L,QSA]
+RewriteRule ^rules/?$ modules/pages/rules.php [L,QSA]
+RewriteRule ^faq/?$ modules/pages/faq.php [L,QSA]
+RewriteRule ^admins/?$ modules/pages/admins.php [L,QSA]
+RewriteRule ^lang/?$ modules/pages/lang.php [L,QSA]
+RewriteRule ^contacts/?$ modules/pages/contacts.php [L,QSA]
+RewriteRule ^app/?$ modules/pages/app.php [L,QSA]
+
+# Поиск
+RewriteRule ^search?$ modules/search/index.php [L,QSA]
+RewriteRule ^search/public/?$ modules/search/index.php?search=public [L,QSA]
+RewriteRule ^search/account/?$ modules/search/index.php?search=account [L,QSA]
+RewriteRule ^search/place/?$ modules/search/index.php?search=place [L,QSA]
+RewriteRule ^search/hashtag/?$ modules/search/index.php?search=hashtag [L,QSA]
+
+# Для сообщений
+RewriteRule ^dialogs?$ /modules/dialogs/index.php [L,QSA]
+RewriteRule ^dialogs/([0-9]*)/?$ /modules/dialogs/index.php?id=$1 [L,QSA]
+RewriteRule ^dialogs/del([0-9]*)?$ /modules/dialogs/index.php?del=$1 [L,QSA]
+RewriteRule ^dialogs/new([0-9]*)?$ /modules/dialogs/new.php?id=$1 [L,QSA]
+RewriteRule ^dialogs/upload([0-9]*)/?$ /modules/dialogs/upload.php?id=$1 [L,QSA]
+
+# Админка
+RewriteRule ^panel/?$ modules/panel/index.php [L,QSA]
+RewriteRule ^panel/main/?$ modules/panel/main.php [L,QSA]
+RewriteRule ^panel/users/?$ modules/panel/users.php [L,QSA]
+RewriteRule ^panel/users/new/?$ modules/panel/users.php?act=new [L,QSA]
+RewriteRule ^panel/users/search/?$ modules/panel/users.php?act=search [L,QSA]
+RewriteRule ^panel/banlist/?$ modules/panel/banlist.php [L,QSA]
+RewriteRule ^panel/history/?$ modules/panel/history.php [L,QSA]
+RewriteRule ^panel/public/?$ modules/panel/public.php [L,QSA]
+RewriteRule ^panel/user/([0-9]*)/?$ modules/panel/user.php?id=$1 [L,QSA]
+RewriteRule ^panel/user/([0-9]*)/personal/?$ modules/panel/user.php?id=$1&act=personal [L,QSA]
+RewriteRule ^panel/user/([0-9]*)/ban/?$ modules/panel/user.php?id=$1&act=ban [L,QSA]
+RewriteRule ^panel/user/([0-9]*)/unban/?$ modules/panel/user.php?id=$1&act=ban&unban [L,QSA]
+
+</IfModule>
+
+# Профиль
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([0-9a-zA-Z-._]*)/$ modules/user/profile.php?nick=$1 [L]
+</IfModule>
+
+# Избранное
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([0-9a-zA-Z-._]*)/favorites/$ modules/user/profile.php?nick=$1&act=favorites [L]
+</IfModule>
+
+# Подписчики
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([0-9a-zA-Z-._]*)/followers/$ modules/follow/followers.php?nick=$1 [L]
+</IfModule>
+
+# Поиск подписчиков
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([0-9a-zA-Z-._]*)/followers/search/$ modules/follow/followers.php?nick=$1&act=search [L]
+</IfModule>
+
+# Подписки
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([0-9a-zA-Z-._]*)/following/$ modules/follow/following.php?nick=$1 [L]
+</IfModule>
+
+# Поиск подписок
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([0-9a-zA-Z-._]*)/following/search/$ modules/follow/following.php?nick=$1&act=search [L]
+</IfModule>
+
+# Удаление подписок
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([0-9a-zA-Z-._]*)/del/([0-9]*)/$ modules/follow/following.php?nick=$1&del= [L]
+</IfModule>
+
+# Подтверждение регистрации
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^signup/([0-9a-zA-Z-._]*)/?$ modules/user/reg/confirm.php?for=$1 [L,QSA]
+</IfModule>
+
+php_flag display_startup_errors on
+php_flag display_errors on
+php_flag html_errors on
+
+# MIME тип по умолчанию
+php_value default_mimetype text/html
+
+# Магические кавычки
+php_flag magic_quotes_gpc Off
+php_flag magic_quotes_runtime Off
+php_flag magic_quotes_sybase Off
+
+# Не создаются переменные argc и argv
+php_flag register_argc_argv Off
+
+# Глобальные переменные
+php_flag register_globals Off
+
+# Сессия
+# php_value session.auto_start 1
+
+# Автоматическое подставление идентификатора сессии к ссылкам
+php_value session.use_trans_sid 1
+
+# Разделитель переменных в URI
+
+Options -Indexes
+AddDefaultCharset UTF-8
+php_value default_charset UTF-8
+php_value upload_max_filesize 30M
+php_value post_max_size 30M
+
+php_value date.timezone "Europe/Kiev"
+
+# mbstring
+# Автозамена на мультибайтную кодировку!!!
+php_value mbstring.func_overload 6
+
+php_value mbstring.internal_encoding UTF-8
+php_value mbstring.http_output pass
+php_value mbstring.http_input pass
+php_value mbstring.encoding_translation 0
+
+# Компрессия
+php_value zlib.output_compression 4096
+php_value zlib.output_compression_level 5
+
+<IfModule mod_headers.c>
+        Header append Cache-Control "public"
+</IfModule>
+ <IfModule mod_expires.c>
+        ExpiresActive On ExpiresDefault "access plus 1 hours"
+</IfModule>
+
+ErrorDocument 304 /
+ErrorDocument 400 /
+ErrorDocument 401 /
+ErrorDocument 403 /
+ErrorDocument 404 /
+ErrorDocument 406 /
+ErrorDocument 500 /
+ErrorDocument 502 /
